@@ -7,6 +7,9 @@ class LRUCache:
     to every node stored in the cache.
     """
     def __init__(self, limit=10):
+        self.limit = limit
+        self.held = 0
+        
         pass
 
     """
