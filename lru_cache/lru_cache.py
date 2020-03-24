@@ -1,3 +1,5 @@
+from doubly_linked_list import DoublyLinkedList
+
 class LRUCache:
     """
     Our LRUCache class keeps track of the max number of nodes it
@@ -7,10 +9,10 @@ class LRUCache:
     to every node stored in the cache.
     """
     def __init__(self, limit=10):
-        self.limit = limit
-        self.held = 0
-        
-        pass
+        self.limit = limit # Adding a limit to the cache
+        self.held = 0 # starting held count too 0
+        self.linked_list = DoublyLinkedList() # setting Cashed storage
+        self.hashing_table = dict()
 
     """
     Retrieves the value associated with the given key. Also
@@ -20,7 +22,15 @@ class LRUCache:
     key-value pair doesn't exist in the cache.
     """
     def get(self, key):
-        pass
+        # If there is the input key in the hashing_table
+        if key in self.hashing_table:
+            # Then move the DoublyLinkedList.tail to the front
+            self.linked_list.move_to_front(self.linked_list.tail)
+            # and return the Key
+            return self.hashing_table[key]
+        # if not ignore
+        else:
+            return None
 
     """
     Adds the given key-value pair to the cache. The newly-
@@ -33,4 +43,19 @@ class LRUCache:
     the newly-specified value.
     """
     def set(self, key, value):
-        pass
+        # If the key allredy in hashing_table then
+        if key in self.hashing_table:
+            # set the key value to input value
+            self.hashing_table[key] = value
+            return # stop est here
+        # if there are more items held than the limit
+        if self.held >= self.limit:
+            # then del oldest cached value
+            del self.hashing_table[self.linked_list.tail.value]
+            self.linked_list.remove_from_tail()
+        # Now lets add the key to the linked list
+        self.linked_list.add_to_head(key)
+        # set the key value to input value
+        self.hashing_table[key] = value
+        self.held += 1 # add +1 to held for tracking the limit
+        
